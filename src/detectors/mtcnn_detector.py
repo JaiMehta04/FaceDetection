@@ -40,9 +40,17 @@ class MTCNNDetector(BaseDetector):
                 "Install via: pip install facenet-pytorch\n"
             )
 
+        # MTCNN uses PyTorch — fall back to CPU if torch lacks CUDA
+        import torch
+        device = self._device
+        if device == "cuda" and not torch.cuda.is_available():
+            logger.warning("MTCNN: PyTorch has no CUDA support — falling back to CPU")
+            device = "cpu"
+            self._device = device
+
         self._model = MTCNN(
             keep_all=True,
-            device=self._device,
+            device=device,
             min_face_size=12,               # lowered from 20 for small faces
             thresholds=[0.5, 0.6, 0.6],     # relaxed from [0.6, 0.7, 0.7]
             post_process=False,
