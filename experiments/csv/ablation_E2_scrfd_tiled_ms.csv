@@ -1,0 +1,2 @@
+experiment,description,detector,sr_mode,sr_scale,tiled,multiscale,total_gt,tp,fp,fn,precision,recall,f1,mean_iou,ap,elapsed_s
+E2_scrfd_tiled_ms,"SCRFD + Tiled(640, 0.25) + MultiScale[0.75, 1.0, 1.5]",scrfd,none,2,True,True,330,252,18,78,0.9333333333333333,0.7636363636363637,0.84,0.7858424111018105,0.7599459257119656,25.1

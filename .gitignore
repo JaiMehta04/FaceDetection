@@ -29,3 +29,6 @@ Thumbs.db
 # Large data files (exceed GitHub 100MB limit)
 data/raw/*.zip
 data/raw/WIDER_val/
+
+# Model weights (large binary files)
+experiments/model_weights/

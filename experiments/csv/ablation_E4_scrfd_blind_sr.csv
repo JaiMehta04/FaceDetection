@@ -1,0 +1,2 @@
+experiment,description,detector,sr_mode,sr_scale,tiled,multiscale,total_gt,tp,fp,fn,precision,recall,f1,mean_iou,ap,elapsed_s
+E4_scrfd_blind_sr,SCRFD + Real-ESRGAN blind SR on full image (upper bound),scrfd,blind,2,False,False,237,116,1,121,0.9914529914529915,0.48945147679324896,0.655367231638418,0.7480724387127777,0.4885859569403873,333.7

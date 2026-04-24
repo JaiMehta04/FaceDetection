@@ -1,0 +1,2 @@
+experiment,description,detector,sr_mode,sr_scale,tiled,multiscale,total_gt,tp,fp,fn,precision,recall,f1,mean_iou,ap,elapsed_s
+E1_scrfd_baseline,"SCRFD (det_10g) at native resolution, no enhancements",scrfd,none,2,False,False,330,172,2,158,0.9885057471264368,0.5212121212121212,0.6825396825396824,0.7575637649658115,0.5198030829546467,2.1

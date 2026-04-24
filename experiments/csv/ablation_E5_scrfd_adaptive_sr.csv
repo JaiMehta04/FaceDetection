@@ -1,0 +1,2 @@
+experiment,description,detector,sr_mode,sr_scale,tiled,multiscale,total_gt,tp,fp,fn,precision,recall,f1,mean_iou,ap,elapsed_s
+E5_scrfd_adaptive_sr,SCRFD + AdaSR-Face (confidence-guided selective SR) — NOVEL,scrfd,adaptive,2,False,False,206,131,20,75,0.8675496688741722,0.6359223300970874,0.7338935574229692,0.7748315484469174,0.6285763844812435,307.2

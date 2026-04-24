@@ -64,6 +64,7 @@ class RetinaFaceDetector(BaseDetector):
                 det_model.prepare(
                     ctx_id=0 if self._device == "cuda" else -1,
                     input_size=(self._det_size, self._det_size),
+                    det_thresh=self._confidence_threshold,
                 )
                 self._det_model = det_model
                 self._backend = "insightface_det"
@@ -79,6 +80,7 @@ class RetinaFaceDetector(BaseDetector):
                             det_size=(self._det_size, self._det_size))
                 # Extract just the detection model
                 self._det_model = app.det_model
+                self._det_model.det_thresh = self._confidence_threshold
                 self._backend = "insightface_det"
                 logger.info("RetinaFace loaded via insightface detection-only (ONNX, fast)")
                 return
@@ -135,7 +137,7 @@ class RetinaFaceDetector(BaseDetector):
         Fast path: use only the detection model (det_10g.onnx).
         Skips landmark, recognition, gender/age — 5x faster than FaceAnalysis.get().
         """
-        bboxes, kpss = self._det_model.detect(image, thresh=self._confidence_threshold)
+        bboxes, kpss = self._det_model.detect(image)
 
         if bboxes is None or len(bboxes) == 0:
             return DetectionResult(
