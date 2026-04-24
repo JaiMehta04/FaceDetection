@@ -25,3 +25,7 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Large data files (exceed GitHub 100MB limit)
+data/raw/*.zip
+data/raw/WIDER_val/

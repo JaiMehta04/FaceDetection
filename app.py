@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parent
 CSV_DIR = ROOT / "outputs" / "csv"
 PLOTS_DIR = ROOT / "outputs" / "plots"
 REPORTS_DIR = ROOT / "outputs" / "reports"
+EXP_CSV_DIR = ROOT / "experiments" / "csv"
 
 # ──────────────────────────────────────────────────────────────
 # Page config
@@ -154,7 +155,8 @@ with st.sidebar:
             "🏷️ Attribute Analysis",
             "🎭 Event/Scene Analysis",
             "📉 PR Curve & Threshold",
-            "🧠 Conclusion & Insights",
+            "� Improvement Experiments",
+            "�🧠 Conclusion & Insights",
             "🖼️ Plot Gallery",
             "📄 Full Text Report",
         ],
@@ -902,7 +904,268 @@ elif page == "📉 PR Curve & Threshold":
 
 
 # ══════════════════════════════════════════════════════════════
-# PAGE 8: Conclusion & Insights
+# PAGE 8: Improvement Experiments
+# ══════════════════════════════════════════════════════════════
+elif page == "🧪 Improvement Experiments":
+    st.title("🧪 Improvement Experiments")
+    st.markdown("""
+    Systematic experiments to push the best variant (**RetinaFace Tiled + MultiScale**)
+    beyond its current F1 = 0.802. Each experiment changes one or two hyperparameters
+    from the baseline to isolate the effect of each improvement.
+    """)
+
+    # Load experiment summary
+    exp_summary_path = EXP_CSV_DIR / "experiment_summary.csv"
+    if exp_summary_path.exists():
+        exp_df = pd.read_csv(exp_summary_path)
+
+        # ── KPI cards for best experiment ──
+        best_row = exp_df.loc[exp_df["f1"].idxmax()]
+        baseline_row = exp_df[exp_df["experiment"].str.contains("E0")]
+        baseline_f1 = baseline_row["f1"].values[0] if len(baseline_row) > 0 else 0.802
+
+        st.subheader("Best Experiment Result")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Best Experiment", best_row["experiment"])
+        c2.metric("F1 Score", f"{best_row['f1']:.4f}",
+                  delta=f"{best_row['f1'] - baseline_f1:+.4f}")
+        c3.metric("Precision", f"{best_row['precision']:.4f}")
+        c4.metric("Recall", f"{best_row['recall']:.4f}",
+                  delta=f"{best_row['recall'] - (baseline_row['recall'].values[0] if len(baseline_row) > 0 else 0.711):+.4f}")
+
+        st.markdown("---")
+
+        # ── Comparison table ──
+        st.subheader("📋 Experiment Comparison Table")
+        display_cols = ["experiment", "description", "precision", "recall", "f1", "ap",
+                        "tp", "fp", "fn", "elapsed_s"]
+        avail_cols = [c for c in display_cols if c in exp_df.columns]
+        exp_display = exp_df[avail_cols].copy()
+
+        # Highlight best F1
+        def highlight_best(s):
+            if s.name in ["f1", "recall", "ap"]:
+                is_max = s == s.max()
+                return ["background-color: #2ecc71; color: white; font-weight: bold" if v else "" for v in is_max]
+            return [""] * len(s)
+
+        st.dataframe(exp_display.style.apply(highlight_best), use_container_width=True, hide_index=True)
+
+        st.markdown("---")
+
+        # ── F1 comparison bar chart ──
+        st.subheader("📊 F1 Score Comparison")
+        fig_f1 = go.Figure()
+        colors = ["#3498db" if exp != best_row["experiment"] else "#2ecc71"
+                  for exp in exp_df["experiment"]]
+        fig_f1.add_trace(go.Bar(
+            x=exp_df["experiment"],
+            y=exp_df["f1"],
+            marker_color=colors,
+            text=exp_df["f1"].round(4),
+            textposition="outside",
+        ))
+        fig_f1.add_hline(y=baseline_f1, line_dash="dash", line_color="red",
+                         annotation_text=f"Baseline F1={baseline_f1:.4f}")
+        fig_f1.update_layout(
+            yaxis_title="F1 Score",
+            xaxis_title="Experiment",
+            yaxis_range=[0, min(1.0, exp_df["f1"].max() * 1.15)],
+            template="plotly_white",
+            height=500,
+        )
+        st.plotly_chart(fig_f1, use_container_width=True)
+
+        # ── Precision vs Recall scatter ──
+        st.subheader("🎯 Precision vs Recall Trade-off")
+        fig_pr = go.Figure()
+        fig_pr.add_trace(go.Scatter(
+            x=exp_df["recall"],
+            y=exp_df["precision"],
+            mode="markers+text",
+            text=exp_df["experiment"],
+            textposition="top center",
+            marker=dict(size=14, color=exp_df["f1"], colorscale="Viridis",
+                        showscale=True, colorbar=dict(title="F1")),
+        ))
+        # Add F1 iso-curves
+        for f1_val in [0.7, 0.75, 0.8, 0.85]:
+            r_vals = np.linspace(0.01, 1.0, 200)
+            p_vals = (f1_val * r_vals) / (2 * r_vals - f1_val)
+            mask = (p_vals > 0) & (p_vals <= 1)
+            fig_pr.add_trace(go.Scatter(
+                x=r_vals[mask], y=p_vals[mask], mode="lines",
+                line=dict(dash="dot", width=1, color="gray"),
+                name=f"F1={f1_val}", showlegend=True,
+            ))
+        fig_pr.update_layout(
+            xaxis_title="Recall", yaxis_title="Precision",
+            xaxis_range=[0, 1], yaxis_range=[0, 1],
+            template="plotly_white", height=550,
+        )
+        st.plotly_chart(fig_pr, use_container_width=True)
+
+        # ── Delta analysis ──
+        st.subheader("📈 Improvement Delta vs Baseline")
+        if len(baseline_row) > 0:
+            delta_df = exp_df[~exp_df["experiment"].str.contains("E0")].copy()
+            delta_df["f1_delta"] = delta_df["f1"] - baseline_f1
+            delta_df["recall_delta"] = delta_df["recall"] - baseline_row["recall"].values[0]
+            delta_df["precision_delta"] = delta_df["precision"] - baseline_row["precision"].values[0]
+
+            fig_delta = make_subplots(rows=1, cols=3,
+                                      subplot_titles=["F1 Delta", "Recall Delta", "Precision Delta"])
+            for col_idx, (metric, label) in enumerate(
+                [("f1_delta", "F1"), ("recall_delta", "Recall"), ("precision_delta", "Precision")], 1
+            ):
+                colors = ["#2ecc71" if v >= 0 else "#e74c3c" for v in delta_df[metric]]
+                fig_delta.add_trace(go.Bar(
+                    x=delta_df["experiment"], y=delta_df[metric],
+                    marker_color=colors,
+                    text=delta_df[metric].round(4), textposition="outside",
+                    name=label, showlegend=False,
+                ), row=1, col=col_idx)
+
+            fig_delta.update_layout(template="plotly_white", height=450)
+            st.plotly_chart(fig_delta, use_container_width=True)
+
+        # ── Speed vs accuracy trade-off ──
+        if "elapsed_s" in exp_df.columns:
+            st.subheader("⏱️ Speed vs Accuracy Trade-off")
+            fig_speed = go.Figure()
+            fig_speed.add_trace(go.Scatter(
+                x=exp_df["elapsed_s"],
+                y=exp_df["f1"],
+                mode="markers+text",
+                text=exp_df["experiment"],
+                textposition="top center",
+                marker=dict(size=14, color=exp_df["recall"], colorscale="RdYlGn",
+                            showscale=True, colorbar=dict(title="Recall")),
+            ))
+            fig_speed.update_layout(
+                xaxis_title="Runtime (seconds)",
+                yaxis_title="F1 Score",
+                template="plotly_white", height=500,
+            )
+            st.plotly_chart(fig_speed, use_container_width=True)
+
+        # ── Per-experiment detail expanders ──
+        st.subheader("🔍 Per-Experiment Details")
+        for _, row in exp_df.iterrows():
+            exp_name = row["experiment"]
+            with st.expander(f"{exp_name}: F1={row['f1']:.4f}  |  {row['description']}", expanded=False):
+                # Config parameters
+                st.markdown("**Configuration:**")
+                param_cols = ["tile_size", "tile_overlap", "scales", "confidence",
+                              "enable_tta", "enable_preprocess"]
+                param_avail = {c: row[c] for c in param_cols if c in row.index and pd.notna(row[c])}
+                st.json(param_avail)
+
+                # Attribute breakdown if available
+                attr_path = EXP_CSV_DIR / f"exp_attribute_{exp_name}.csv"
+                if attr_path.exists():
+                    attr_df = pd.read_csv(attr_path)
+                    st.markdown("**Attribute Recall Breakdown:**")
+                    if "attribute" in attr_df.columns and "recall" in attr_df.columns:
+                        fig_attr = go.Figure(go.Bar(
+                            x=attr_df["attribute"] if "attribute" in attr_df.columns else attr_df.iloc[:, 0],
+                            y=attr_df["recall"],
+                            marker_color="#3498db",
+                            text=attr_df["recall"].round(3),
+                            textposition="outside",
+                        ))
+                        fig_attr.update_layout(
+                            yaxis_title="Recall", yaxis_range=[0, 1],
+                            template="plotly_white", height=350,
+                        )
+                        st.plotly_chart(fig_attr, use_container_width=True)
+
+                # Groupwise breakdown if available
+                gw_path = EXP_CSV_DIR / f"exp_groupwise_{exp_name}.csv"
+                if gw_path.exists():
+                    gw_df = pd.read_csv(gw_path)
+                    st.markdown("**Group-wise F1 Score:**")
+                    if "group" in gw_df.columns and "f1" in gw_df.columns:
+                        fig_gw = go.Figure(go.Bar(
+                            x=gw_df["group"], y=gw_df["f1"],
+                            marker_color="#9b59b6",
+                            text=gw_df["f1"].round(3), textposition="outside",
+                        ))
+                        fig_gw.update_layout(
+                            yaxis_title="F1 Score", yaxis_range=[0, 1],
+                            template="plotly_white", height=350,
+                        )
+                        st.plotly_chart(fig_gw, use_container_width=True)
+
+                # PR curve if available
+                pr_path = EXP_CSV_DIR / f"exp_pr_curve_{exp_name}.csv"
+                if pr_path.exists():
+                    pr_df = pd.read_csv(pr_path)
+                    if "recall" in pr_df.columns and "precision" in pr_df.columns:
+                        st.markdown(f"**PR Curve (AP={row.get('ap', 'N/A'):.4f}):**" if pd.notna(row.get("ap")) else "**PR Curve:**")
+                        fig_prc = go.Figure(go.Scatter(
+                            x=pr_df["recall"], y=pr_df["precision"],
+                            mode="lines", fill="tozeroy",
+                            line=dict(color="#e74c3c"),
+                        ))
+                        fig_prc.update_layout(
+                            xaxis_title="Recall", yaxis_title="Precision",
+                            xaxis_range=[0, 1], yaxis_range=[0, 1],
+                            template="plotly_white", height=350,
+                        )
+                        st.plotly_chart(fig_prc, use_container_width=True)
+
+        # ── Key takeaways ──
+        st.markdown("---")
+        st.subheader("💡 Key Takeaways")
+        if len(exp_df) > 1:
+            best = exp_df.loc[exp_df["f1"].idxmax()]
+            worst = exp_df.loc[exp_df["f1"].idxmin()]
+            highest_recall = exp_df.loc[exp_df["recall"].idxmax()]
+            highest_precision = exp_df.loc[exp_df["precision"].idxmax()]
+
+            st.markdown(f"""
+            - **Best F1**: `{best['experiment']}` achieved F1 = **{best['f1']:.4f}** ({best['f1'] - baseline_f1:+.4f} vs baseline)
+            - **Highest Recall**: `{highest_recall['experiment']}` with recall = **{highest_recall['recall']:.4f}**
+            - **Highest Precision**: `{highest_precision['experiment']}` with precision = **{highest_precision['precision']:.4f}**
+            - **Lowest F1**: `{worst['experiment']}` at F1 = **{worst['f1']:.4f}**
+            - **F1 Range**: {worst['f1']:.4f} → {best['f1']:.4f} (spread = {best['f1'] - worst['f1']:.4f})
+            """)
+
+    else:
+        st.info("No experiment results found. Run `python experiments/run_experiments.py` first.")
+        st.markdown("""
+        **How to run experiments:**
+        ```bash
+        # Run all experiments
+        python experiments/run_experiments.py
+
+        # Run specific experiments
+        python experiments/run_experiments.py --experiments E1_aggressive_scales E3_low_confidence
+
+        # Quick test with 100 images
+        python experiments/run_experiments.py --max-images 100
+        ```
+        """)
+
+        st.markdown("**Planned Experiments:**")
+        experiments_info = [
+            ("E0_current_best", "Baseline: tiles=640, overlap=0.25, scales=[0.75,1.0,1.5]"),
+            ("E1_aggressive_scales", "Wider scales [0.5,0.75,1.0,1.5,2.0] for smaller faces"),
+            ("E2_smaller_tiles", "Smaller tiles (480px) + more overlap (35%)"),
+            ("E3_low_confidence", "Lower confidence threshold (0.3)"),
+            ("E4_clahe_preprocess", "CLAHE preprocessing for dark faces"),
+            ("E5_tta_flip", "Test-Time Augmentation (horizontal flip)"),
+            ("E6_small_tiles_agg_scales", "Combined: smaller tiles + aggressive scales"),
+            ("E7_kitchen_sink", "All improvements combined"),
+            ("E8_best_no_tta", "All improvements except TTA (faster)"),
+        ]
+        for name, desc in experiments_info:
+            st.markdown(f"- **{name}**: {desc}")
+
+
+# ══════════════════════════════════════════════════════════════
+# PAGE 9: Conclusion & Insights
 # ══════════════════════════════════════════════════════════════
 elif page == "🧠 Conclusion & Insights":
     st.title("🧠 Conclusion & Consolidated Insights")

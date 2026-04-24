@@ -1,0 +1,2 @@
+experiment,description,total_gt,tp,fp,fn,precision,recall,f1,mean_iou,ap,elapsed_s,tile_size,tile_overlap,scales,confidence,enable_tta,enable_preprocess
+E0_current_best,"Current best: Tiled(640,0.25) + MS[0.75,1.0,1.5] + conf=0.5",816,688,41,128,0.943758573388203,0.8431372549019608,0.8906148867313916,0.7679449692368507,0.8392738516305835,61.8,640,0.25,"[0.75, 1.0, 1.5]",0.5,False,False

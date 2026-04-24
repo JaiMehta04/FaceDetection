@@ -135,7 +135,7 @@ class RetinaFaceDetector(BaseDetector):
         Fast path: use only the detection model (det_10g.onnx).
         Skips landmark, recognition, gender/age — 5x faster than FaceAnalysis.get().
         """
-        bboxes, kpss = self._det_model.detect(image)
+        bboxes, kpss = self._det_model.detect(image, thresh=self._confidence_threshold)
 
         if bboxes is None or len(bboxes) == 0:
             return DetectionResult(

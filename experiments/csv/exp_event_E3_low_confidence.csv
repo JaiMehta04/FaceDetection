@@ -1,0 +1,2 @@
+event,num_images,total_gt,tp,fp,fn,precision,recall,f1
+Parade,20,816,688,41,128,0.9438,0.8431,0.8906
