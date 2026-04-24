@@ -13,10 +13,7 @@ venv/
 .venv/
 env/
 
-# Data and outputs (large files)
-data/raw/
-data/processed/
-outputs/
+
 
 # IDE
 .vscode/

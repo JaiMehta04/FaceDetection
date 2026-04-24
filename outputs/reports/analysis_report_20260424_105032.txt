@@ -1,0 +1,1107 @@
+======================================================================
+  FACE DETECTION & ANONYMIZATION — ANALYSIS REPORT
+  Generated: 2026-04-24 10:50:32
+======================================================================
+
+======================================================================
+  1. OVERALL METRICS COMPARISON
+======================================================================
+
+  Unit reference:
+    Precision  = TP / (TP + FP)  — of all detections, how many are correct
+    Recall     = TP / (TP + FN)  — of all GT faces, how many were found
+    F1 Score   = harmonic mean of Precision and Recall
+    Mean IoU   = average Intersection-over-Union for matched boxes
+
+                                    variant  total_gt    tp    fp    fn precision recall     f1 mean_iou
+                                      MTCNN     39123 17759  4113 21364    0.8120 0.4539 0.5823   0.7723
+                           MTCNN_MultiScale     39123 20092 11470 19031    0.6366 0.5136 0.5685   0.7690
+                     MTCNN_Tiled_MultiScale     39123 20732 17169 18391    0.5470 0.5299 0.5383   0.7619
+                 RetinaFace_insightface_det     39123 19977   888 19146    0.9574 0.5106 0.6660   0.7918
+      RetinaFace_insightface_det_MultiScale     39123 20250   948 18873    0.9553 0.5176 0.6714   0.7900
+RetinaFace_insightface_det_Tiled_MultiScale     39123 27801  2374 11322    0.9213 0.7106 0.8024   0.7857
+
+  >> Best F1 Score: RetinaFace_insightface_det_Tiled_MultiScale (0.8024)
+
+
+======================================================================
+  2. GROUP-WISE ANALYSIS (Performance vs. Face Density)
+======================================================================
+
+  Images grouped by number of ground-truth faces.
+  Expectation: recall drops in crowded images (51+ faces).
+
+  --- MTCNN ---
+  bin  num_images  total_gt   tp   fp    fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222 5277 2090  1945     0.7163  0.7307 0.7234    0.7999
+11-20         351      5150 2884  681  2266     0.8090  0.5600 0.6618    0.7789
+21-30         139      3485 1914  299  1571     0.8649  0.5492 0.6718    0.7848
+31-40          70      2479 1317  214  1162     0.8602  0.5313 0.6569    0.7754
+41-50          26      1189  471   96   718     0.8307  0.3961 0.5364    0.7562
+  51+         136     19598 5896  733 13702     0.8894  0.3008 0.4496    0.7410
+
+  --- MTCNN_MultiScale ---
+  bin  num_images  total_gt   tp   fp    fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222 5518 5210  1704     0.5144  0.7641 0.6148    0.7964
+11-20         351      5150 3096 1771  2054     0.6361  0.6012 0.6181    0.7760
+21-30         139      3485 2072  847  1413     0.7098  0.5945 0.6471    0.7819
+31-40          70      2479 1445  673  1034     0.6822  0.5829 0.6287    0.7734
+41-50          26      1189  544  268   645     0.6700  0.4575 0.5437    0.7527
+  51+         136     19598 7417 2701 12181     0.7331  0.3785 0.4992    0.7425
+
+  --- MTCNN_Tiled_MultiScale ---
+  bin  num_images  total_gt   tp   fp    fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222 5596 8482  1626     0.3975  0.7749 0.5254    0.7818
+11-20         351      5150 3192 2599  1958     0.5512  0.6198 0.5835    0.7696
+21-30         139      3485 2132 1227  1353     0.6347  0.6118 0.6230    0.7758
+31-40          70      2479 1481  963   998     0.6060  0.5974 0.6017    0.7684
+41-50          26      1189  568  357   621     0.6141  0.4777 0.5374    0.7521
+  51+         136     19598 7763 3541 11835     0.6867  0.3961 0.5024    0.7401
+
+  --- RetinaFace_insightface_det ---
+  bin  num_images  total_gt   tp  fp    fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222 6089 225  1133     0.9644  0.8431 0.8997    0.8284
+11-20         351      5150 3310 115  1840     0.9664  0.6427 0.7720    0.7992
+21-30         139      3485 2096  65  1389     0.9699  0.6014 0.7425    0.8004
+31-40          70      2479 1464  49  1015     0.9676  0.5906 0.7335    0.7842
+41-50          26      1189  527  28   662     0.9495  0.4432 0.6044    0.7847
+  51+         136     19598 6491 406 13107     0.9411  0.3312 0.4900    0.7533
+
+  --- RetinaFace_insightface_det_MultiScale ---
+  bin  num_images  total_gt   tp  fp    fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222 6116 246  1106     0.9613  0.8469 0.9005    0.8280
+11-20         351      5150 3351 128  1799     0.9632  0.6507 0.7767    0.7983
+21-30         139      3485 2113  75  1372     0.9657  0.6063 0.7449    0.7994
+31-40          70      2479 1487  53   992     0.9656  0.5998 0.7400    0.7823
+41-50          26      1189  536  28   653     0.9504  0.4508 0.6115    0.7836
+  51+         136     19598 6647 418 12951     0.9408  0.3392 0.4986    0.7501
+
+  --- RetinaFace_insightface_det_Tiled_MultiScale ---
+  bin  num_images  total_gt    tp   fp   fn  precision  recall     f1  mean_iou
+ 0-10        2504      7222  6460  577  762     0.9180  0.8945 0.9061    0.8294
+11-20         351      5150  3977  290 1173     0.9320  0.7722 0.8446    0.7981
+21-30         139      3485  2653  169  832     0.9401  0.7613 0.8413    0.8018
+31-40          70      2479  1884  149  595     0.9267  0.7600 0.8351    0.7881
+41-50          26      1189   767   75  422     0.9109  0.6451 0.7553    0.7781
+  51+         136     19598 12060 1114 7538     0.9154  0.6154 0.7360    0.7547
+
+
+======================================================================
+  3. IMAGE QUALITY ANALYSIS
+======================================================================
+
+  For each face (detected / undetected / false positive), we measure:
+    - Face area: bounding box width × height (pixels²)
+        Example: 256 px² ≈ 16×16 pixel face (very tiny)
+                 1,024 px² ≈ 32×32 pixel face (small)
+                 4,096 px² ≈ 64×64 pixel face (medium)
+    - Face brightness: mean value of HSV V-channel (0=black, 255=white)
+        < 80 → dark face (hard to detect)
+        80–180 → normal illumination
+        > 180 → bright / overexposed
+    - Image blur: variance of Laplacian operator on grayscale image
+        < 50 → blurry image
+        50–200 → moderate sharpness
+        > 200 → sharp image
+    - Confidence: model's certainty for its detection (0.0–1.0)
+
+  --- Summary: MTCNN ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  17759     7504.316853            131.011445             122.946301       718.807362         0.958084
+false_positive   4113     4283.834813            116.230075             122.640202       577.283677         0.776279
+    undetected  21364      888.468826            113.125794             118.618353       904.579752              NaN
+
+  --- Summary: MTCNN_MultiScale ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  20092     6777.756470            129.772102             122.733878       750.225698         0.953976
+false_positive  11470     3421.608890            119.079911             122.554183       666.776044         0.672166
+    undetected  19031      844.502548            112.241639             118.312058       894.183543              NaN
+
+  --- Summary: MTCNN_Tiled_MultiScale ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  20732     6595.862917            129.459272             122.727960       752.886488         0.952280
+false_positive  17169    11630.756536            119.789407             123.228741       627.719617         0.668728
+    undetected  18391      843.074384            111.984236             118.164851       896.193740              NaN
+
+  --- Summary: RetinaFace_insightface_det ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  19977     7066.471592            128.915493             123.036704       670.875624         0.755081
+false_positive    888     1856.398444            113.415037             120.139717       754.316885         0.587776
+    undetected  19146      578.894182            113.240724             118.022648       976.112996              NaN
+
+  --- Summary: RetinaFace_insightface_det_MultiScale ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  20250     6980.814667            128.754935             123.018575       675.145207         0.754531
+false_positive    948     1811.911538            113.676116             120.071232       739.934634         0.584271
+    undetected  18873      576.957241            113.186259             117.969571       975.947189              NaN
+
+  --- Summary: RetinaFace_insightface_det_Tiled_MultiScale ---
+      category  count  mean_face_area  mean_face_brightness  mean_image_brightness  mean_image_blur  mean_confidence
+      detected  27801     5162.864034            125.925211             122.424593       777.099620         0.757913
+false_positive   2374     1638.959237            112.821043             119.540368       821.347478         0.563775
+    undetected  11322      769.972443            109.751361             116.060743       926.214028              NaN
+
+
+----------------------------------------------------------------------
+  Quality Analysis: MTCNN
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 17,759
+    Face area (pixels²):
+      Mean   = 7,504 px²
+      Median = 1,044 px²
+      Std    = 33,528 px²
+      < 256 px²  (≈ 16×16 px face): 2,559 (14.4%)
+      < 1,024 px² (≈ 32×32 px face): 8,832 (49.7%)
+      < 4,096 px² (≈ 64×64 px face): 14,095 (79.4%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 131.0
+      Median = 131.3
+      Dark faces (V < 80): 1,888 (10.6%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 718.8
+      Blurry images (var < 50): 704 (4.0%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.958
+      Median = 0.999
+      Min    = 0.600
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 21,364
+    Face area (pixels²):
+      Mean   = 888 px²
+      Median = 126 px²
+      Std    = 8,216 px²
+      < 256 px²  (≈ 16×16 px face): 15,363 (71.9%)
+      < 1,024 px² (≈ 32×32 px face): 19,358 (90.6%)
+      < 4,096 px² (≈ 64×64 px face): 20,745 (97.1%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 113.1
+      Median = 110.8
+      Dark faces (V < 80): 4,801 (22.5%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 904.6
+      Blurry images (var < 50): 481 (2.3%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 4,113
+    Face area (pixels²):
+      Mean   = 4,284 px²
+      Median = 867 px²
+      Std    = 28,093 px²
+      < 256 px²  (≈ 16×16 px face): 597 (14.5%)
+      < 1,024 px² (≈ 32×32 px face): 2,234 (54.3%)
+      < 4,096 px² (≈ 64×64 px face): 3,530 (85.8%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 116.2
+      Median = 114.9
+      Dark faces (V < 80): 932 (22.7%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 577.3
+      Blurry images (var < 50): 239 (5.8%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.776
+      Median = 0.759
+      Min    = 0.600
+
+
+----------------------------------------------------------------------
+  Quality Analysis: MTCNN_MultiScale
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 20,092
+    Face area (pixels²):
+      Mean   = 6,778 px²
+      Median = 864 px²
+      Std    = 31,855 px²
+      < 256 px²  (≈ 16×16 px face): 4,106 (20.4%)
+      < 1,024 px² (≈ 32×32 px face): 10,877 (54.1%)
+      < 4,096 px² (≈ 64×64 px face): 16,336 (81.3%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 129.8
+      Median = 129.8
+      Dark faces (V < 80): 2,248 (11.2%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 750.2
+      Blurry images (var < 50): 741 (3.7%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.954
+      Median = 0.999
+      Min    = 0.301
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 19,031
+    Face area (pixels²):
+      Mean   = 845 px²
+      Median = 120 px²
+      Std    = 7,596 px²
+      < 256 px²  (≈ 16×16 px face): 13,816 (72.6%)
+      < 1,024 px² (≈ 32×32 px face): 17,313 (91.0%)
+      < 4,096 px² (≈ 64×64 px face): 18,504 (97.2%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 112.2
+      Median = 109.8
+      Dark faces (V < 80): 4,441 (23.3%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 894.2
+      Blurry images (var < 50): 444 (2.3%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 11,470
+    Face area (pixels²):
+      Mean   = 3,422 px²
+      Median = 685 px²
+      Std    = 34,562 px²
+      < 256 px²  (≈ 16×16 px face): 2,480 (21.6%)
+      < 1,024 px² (≈ 32×32 px face): 7,058 (61.5%)
+      < 4,096 px² (≈ 64×64 px face): 10,221 (89.1%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 119.1
+      Median = 118.0
+      Dark faces (V < 80): 2,327 (20.3%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 666.8
+      Blurry images (var < 50): 511 (4.5%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.672
+      Median = 0.698
+      Min    = 0.300
+
+
+----------------------------------------------------------------------
+  Quality Analysis: MTCNN_Tiled_MultiScale
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 20,732
+    Face area (pixels²):
+      Mean   = 6,596 px²
+      Median = 825 px²
+      Std    = 31,363 px²
+      < 256 px²  (≈ 16×16 px face): 4,428 (21.4%)
+      < 1,024 px² (≈ 32×32 px face): 11,423 (55.1%)
+      < 4,096 px² (≈ 64×64 px face): 16,944 (81.7%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 129.5
+      Median = 129.4
+      Dark faces (V < 80): 2,364 (11.4%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 752.9
+      Blurry images (var < 50): 759 (3.7%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.952
+      Median = 0.999
+      Min    = 0.301
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 18,391
+    Face area (pixels²):
+      Mean   = 843 px²
+      Median = 112 px²
+      Std    = 7,787 px²
+      < 256 px²  (≈ 16×16 px face): 13,494 (73.4%)
+      < 1,024 px² (≈ 32×32 px face): 16,767 (91.2%)
+      < 4,096 px² (≈ 64×64 px face): 17,896 (97.3%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 112.0
+      Median = 109.6
+      Dark faces (V < 80): 4,325 (23.5%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 896.2
+      Blurry images (var < 50): 426 (2.3%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 17,169
+    Face area (pixels²):
+      Mean   = 11,631 px²
+      Median = 762 px²
+      Std    = 74,941 px²
+      < 256 px²  (≈ 16×16 px face): 3,205 (18.7%)
+      < 1,024 px² (≈ 32×32 px face): 9,977 (58.1%)
+      < 4,096 px² (≈ 64×64 px face): 14,606 (85.1%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 119.8
+      Median = 119.1
+      Dark faces (V < 80): 3,489 (20.3%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 627.7
+      Blurry images (var < 50): 969 (5.6%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.669
+      Median = 0.691
+      Min    = 0.300
+
+
+----------------------------------------------------------------------
+  Quality Analysis: RetinaFace_insightface_det
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 19,977
+    Face area (pixels²):
+      Mean   = 7,066 px²
+      Median = 1,023 px²
+      Std    = 30,405 px²
+      < 256 px²  (≈ 16×16 px face): 2,793 (14.0%)
+      < 1,024 px² (≈ 32×32 px face): 9,994 (50.0%)
+      < 4,096 px² (≈ 64×64 px face): 15,910 (79.6%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 128.9
+      Median = 129.2
+      Dark faces (V < 80): 2,468 (12.4%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 670.9
+      Blurry images (var < 50): 819 (4.1%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.755
+      Median = 0.781
+      Min    = 0.500
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 19,146
+    Face area (pixels²):
+      Mean   = 579 px²
+      Median = 110 px²
+      Std    = 12,414 px²
+      < 256 px²  (≈ 16×16 px face): 15,129 (79.0%)
+      < 1,024 px² (≈ 32×32 px face): 18,196 (95.0%)
+      < 4,096 px² (≈ 64×64 px face): 18,930 (98.9%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 113.2
+      Median = 110.9
+      Dark faces (V < 80): 4,221 (22.0%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 976.1
+      Blurry images (var < 50): 366 (1.9%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 888
+    Face area (pixels²):
+      Mean   = 1,856 px²
+      Median = 483 px²
+      Std    = 6,724 px²
+      < 256 px²  (≈ 16×16 px face): 276 (31.1%)
+      < 1,024 px² (≈ 32×32 px face): 613 (69.0%)
+      < 4,096 px² (≈ 64×64 px face): 817 (92.0%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 113.4
+      Median = 114.0
+      Dark faces (V < 80): 195 (22.0%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 754.3
+      Blurry images (var < 50): 27 (3.0%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.588
+      Median = 0.569
+      Min    = 0.500
+
+
+----------------------------------------------------------------------
+  Quality Analysis: RetinaFace_insightface_det_MultiScale
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 20,250
+    Face area (pixels²):
+      Mean   = 6,981 px²
+      Median = 1,008 px²
+      Std    = 30,209 px²
+      < 256 px²  (≈ 16×16 px face): 2,922 (14.4%)
+      < 1,024 px² (≈ 32×32 px face): 10,231 (50.5%)
+      < 4,096 px² (≈ 64×64 px face): 16,174 (79.9%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 128.8
+      Median = 129.0
+      Dark faces (V < 80): 2,522 (12.5%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 675.1
+      Blurry images (var < 50): 823 (4.1%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.755
+      Median = 0.781
+      Min    = 0.393
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 18,873
+    Face area (pixels²):
+      Mean   = 577 px²
+      Median = 108 px²
+      Std    = 12,502 px²
+      < 256 px²  (≈ 16×16 px face): 15,000 (79.5%)
+      < 1,024 px² (≈ 32×32 px face): 17,959 (95.2%)
+      < 4,096 px² (≈ 64×64 px face): 18,666 (98.9%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 113.2
+      Median = 110.7
+      Dark faces (V < 80): 4,167 (22.1%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 975.9
+      Blurry images (var < 50): 362 (1.9%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 948
+    Face area (pixels²):
+      Mean   = 1,812 px²
+      Median = 501 px²
+      Std    = 6,510 px²
+      < 256 px²  (≈ 16×16 px face): 286 (30.2%)
+      < 1,024 px² (≈ 32×32 px face): 652 (68.8%)
+      < 4,096 px² (≈ 64×64 px face): 874 (92.2%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 113.7
+      Median = 114.5
+      Dark faces (V < 80): 210 (22.2%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 739.9
+      Blurry images (var < 50): 28 (3.0%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.584
+      Median = 0.567
+      Min    = 0.313
+
+
+----------------------------------------------------------------------
+  Quality Analysis: RetinaFace_insightface_det_Tiled_MultiScale
+----------------------------------------------------------------------
+
+  [DETECTED (True Positives)]  count = 27,801
+    Face area (pixels²):
+      Mean   = 5,163 px²
+      Median = 550 px²
+      Std    = 25,961 px²
+      < 256 px²  (≈ 16×16 px face): 8,995 (32.4%)
+      < 1,024 px² (≈ 32×32 px face): 17,539 (63.1%)
+      < 4,096 px² (≈ 64×64 px face): 23,670 (85.1%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 125.9
+      Median = 125.5
+      Dark faces (V < 80): 3,786 (13.6%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 777.1
+      Blurry images (var < 50): 897 (3.2%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.758
+      Median = 0.781
+      Min    = 0.308
+
+  [UNDETECTED (False Negatives — missed faces)]  count = 11,322
+    Face area (pixels²):
+      Mean   = 770 px²
+      Median = 90 px²
+      Std    = 16,106 px²
+      < 256 px²  (≈ 16×16 px face): 8,927 (78.8%)
+      < 1,024 px² (≈ 32×32 px face): 10,651 (94.1%)
+      < 4,096 px² (≈ 64×64 px face): 11,170 (98.7%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 109.8
+      Median = 107.2
+      Dark faces (V < 80): 2,903 (25.6%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 926.2
+      Blurry images (var < 50): 288 (2.5%)
+
+  [FALSE POSITIVES (wrong detections)]  count = 2,374
+    Face area (pixels²):
+      Mean   = 1,639 px²
+      Median = 283 px²
+      Std    = 6,981 px²
+      < 256 px²  (≈ 16×16 px face): 1,105 (46.5%)
+      < 1,024 px² (≈ 32×32 px face): 1,863 (78.5%)
+      < 4,096 px² (≈ 64×64 px face): 2,220 (93.5%)
+    Face brightness (HSV V-channel, 0=black, 255=white):
+      Mean   = 112.8
+      Median = 111.1
+      Dark faces (V < 80): 588 (24.8%)
+    Image blur (Laplacian variance, higher=sharper):
+      Mean   = 821.3
+      Blurry images (var < 50): 62 (2.6%)
+    Confidence score (0.0–1.0, model certainty):
+      Mean   = 0.564
+      Median = 0.556
+      Min    = 0.300
+
+
+======================================================================
+  4. DISTANCE-BASED FAILURE ANALYSIS
+======================================================================
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: MTCNN
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 140,464
+    Mean distance   = 378.4 px
+    Median distance = 350.4 px
+    Std deviation   = 217.2 px
+    Min / Max       = 5.7 / 1335.8 px
+    Very close (< 50 px): 2,836 (2.0%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 241,529
+    Mean distance   = 390.6 px
+    Median distance = 365.9 px
+    Std deviation   = 219.8 px
+    Min / Max       = 1.5 / 1431.6 px
+    Very close (< 50 px): 4,698 (1.9%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 276,063
+    Mean distance   = 334.0 px
+    Median distance = 293.7 px
+    Std deviation   = 214.3 px
+    Min / Max       = 0.7 / 1275.7 px
+    Very close (< 50 px): 10,740 (3.9%)
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: MTCNN_MultiScale
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 201,617
+    Mean distance   = 368.9 px
+    Median distance = 340.4 px
+    Std deviation   = 213.7 px
+    Min / Max       = 5.7 / 1335.8 px
+    Very close (< 50 px): 4,530 (2.2%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 265,354
+    Mean distance   = 378.1 px
+    Median distance = 349.4 px
+    Std deviation   = 220.0 px
+    Min / Max       = 1.5 / 1431.6 px
+    Very close (< 50 px): 6,064 (2.3%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 191,085
+    Mean distance   = 340.1 px
+    Median distance = 299.2 px
+    Std deviation   = 219.5 px
+    Min / Max       = 0.7 / 1275.7 px
+    Very close (< 50 px): 7,680 (4.0%)
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: MTCNN_Tiled_MultiScale
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 217,397
+    Mean distance   = 366.3 px
+    Median distance = 337.5 px
+    Std deviation   = 213.1 px
+    Min / Max       = 5.7 / 1335.8 px
+    Very close (< 50 px): 4,986 (2.3%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 265,771
+    Mean distance   = 377.7 px
+    Median distance = 348.8 px
+    Std deviation   = 220.4 px
+    Min / Max       = 1.5 / 1431.6 px
+    Very close (< 50 px): 6,186 (2.3%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 174,888
+    Mean distance   = 341.2 px
+    Median distance = 299.6 px
+    Std deviation   = 220.4 px
+    Min / Max       = 0.7 / 1275.7 px
+    Very close (< 50 px): 7,102 (4.1%)
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: RetinaFace_insightface_det
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 164,040
+    Mean distance   = 371.9 px
+    Median distance = 340.7 px
+    Std deviation   = 217.7 px
+    Min / Max       = 11.7 / 1431.6 px
+    Very close (< 50 px): 3,476 (2.1%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 243,042
+    Mean distance   = 388.2 px
+    Median distance = 364.8 px
+    Std deviation   = 218.2 px
+    Min / Max       = 1.5 / 1424.8 px
+    Very close (< 50 px): 4,928 (2.0%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 250,974
+    Mean distance   = 336.0 px
+    Median distance = 295.2 px
+    Std deviation   = 216.2 px
+    Min / Max       = 0.7 / 1277.2 px
+    Very close (< 50 px): 9,870 (3.9%)
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: RetinaFace_insightface_det_MultiScale
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 169,669
+    Mean distance   = 371.3 px
+    Median distance = 340.1 px
+    Std deviation   = 217.3 px
+    Min / Max       = 11.7 / 1431.6 px
+    Very close (< 50 px): 3,633 (2.1%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 243,842
+    Mean distance   = 387.5 px
+    Median distance = 364.0 px
+    Std deviation   = 218.2 px
+    Min / Max       = 1.5 / 1424.8 px
+    Very close (< 50 px): 4,964 (2.0%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 244,545
+    Mean distance   = 336.1 px
+    Median distance = 295.2 px
+    Std deviation   = 216.6 px
+    Min / Max       = 0.7 / 1277.2 px
+    Very close (< 50 px): 9,677 (4.0%)
+
+
+----------------------------------------------------------------------
+  Distance-Based Failure Analysis: RetinaFace_insightface_det_Tiled_MultiScale
+----------------------------------------------------------------------
+
+  Pairwise Euclidean distance between face bounding-box centres (pixels).
+  Short Det↔Undet distance → NMS suppression or occlusion caused the miss.
+  Clustered Undet↔Undet → dense crowd region the detector cannot resolve.
+
+  [Detected ↔ Detected]  pairs = 420,878
+    Mean distance   = 362.1 px
+    Median distance = 332.0 px
+    Std deviation   = 214.2 px
+    Min / Max       = 4.9 / 1431.6 px
+    Very close (< 50 px): 10,739 (2.6%)
+
+  [Detected ↔ Undetected (potential NMS/occlusion)]  pairs = 187,123
+    Mean distance   = 374.6 px
+    Median distance = 341.4 px
+    Std deviation   = 225.0 px
+    Min / Max       = 0.7 / 1424.8 px
+    Very close (< 50 px): 5,090 (2.7%)
+
+  [Undetected ↔ Undetected (clustered misses)]  pairs = 50,055
+    Mean distance   = 344.1 px
+    Median distance = 298.1 px
+    Std deviation   = 228.5 px
+    Min / Max       = 1.1 / 1247.7 px
+    Very close (< 50 px): 2,445 (4.9%)
+
+
+======================================================================
+  5. ATTRIBUTE-BASED ANALYSIS
+======================================================================
+
+  WIDER FACE provides per-face annotation attributes:
+    blur:         0=Clear, 1=Normal Blur, 2=Heavy Blur
+    occlusion:    0=None, 1=Partial, 2=Heavy
+    illumination: 0=Normal, 1=Extreme
+    expression:   0=Typical, 1=Exaggerated
+    pose:         0=Typical, 1=Atypical
+
+  --- MTCNN ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4467     902  0.8320
+        blur      1  Normal Blur  10381      7896    2485  0.7606
+        blur      2   Heavy Blur  23373      5396   17977  0.2309
+  expression      0      Typical  38723     17445   21278  0.4505
+  expression      1  Exaggerated    400       314      86  0.7850
+illumination      0       Normal  36843     16518   20325  0.4483
+illumination      1      Extreme   2280      1241    1039  0.5443
+   occlusion      0 No Occlusion  23434     14599    8835  0.6230
+   occlusion      1      Partial   7099      1911    5188  0.2692
+   occlusion      2        Heavy   8590      1249    7341  0.1454
+        pose      0      Typical  37486     17278   20208  0.4609
+        pose      1     Atypical   1637       481    1156  0.2938
+
+    blur: best=Clear (recall=0.832), worst=Heavy Blur (recall=0.231), gap=0.601
+    expression: best=Exaggerated (recall=0.785), worst=Typical (recall=0.451), gap=0.335
+    illumination: best=Extreme (recall=0.544), worst=Normal (recall=0.448), gap=0.096
+    occlusion: best=No Occlusion (recall=0.623), worst=Heavy (recall=0.145), gap=0.478
+    pose: best=Typical (recall=0.461), worst=Atypical (recall=0.294), gap=0.167
+
+  --- MTCNN_MultiScale ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4568     801  0.8508
+        blur      1  Normal Blur  10381      8421    1960  0.8112
+        blur      2   Heavy Blur  23373      7103   16270  0.3039
+  expression      0      Typical  38723     19762   18961  0.5103
+  expression      1  Exaggerated    400       330      70  0.8250
+illumination      0       Normal  36843     18728   18115  0.5083
+illumination      1      Extreme   2280      1364     916  0.5982
+   occlusion      0 No Occlusion  23434     15984    7450  0.6821
+   occlusion      1      Partial   7099      2449    4650  0.3450
+   occlusion      2        Heavy   8590      1659    6931  0.1931
+        pose      0      Typical  37486     19531   17955  0.5210
+        pose      1     Atypical   1637       561    1076  0.3427
+
+    blur: best=Clear (recall=0.851), worst=Heavy Blur (recall=0.304), gap=0.547
+    expression: best=Exaggerated (recall=0.825), worst=Typical (recall=0.510), gap=0.315
+    illumination: best=Extreme (recall=0.598), worst=Normal (recall=0.508), gap=0.090
+    occlusion: best=No Occlusion (recall=0.682), worst=Heavy (recall=0.193), gap=0.489
+    pose: best=Typical (recall=0.521), worst=Atypical (recall=0.343), gap=0.178
+
+  --- MTCNN_Tiled_MultiScale ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4604     765  0.8575
+        blur      1  Normal Blur  10381      8559    1822  0.8245
+        blur      2   Heavy Blur  23373      7569   15804  0.3238
+  expression      0      Typical  38723     20399   18324  0.5268
+  expression      1  Exaggerated    400       333      67  0.8325
+illumination      0       Normal  36843     19327   17516  0.5246
+illumination      1      Extreme   2280      1405     875  0.6162
+   occlusion      0 No Occlusion  23434     16341    7093  0.6973
+   occlusion      1      Partial   7099      2566    4533  0.3615
+   occlusion      2        Heavy   8590      1825    6765  0.2125
+        pose      0      Typical  37486     20121   17365  0.5368
+        pose      1     Atypical   1637       611    1026  0.3732
+
+    blur: best=Clear (recall=0.858), worst=Heavy Blur (recall=0.324), gap=0.534
+    expression: best=Exaggerated (recall=0.833), worst=Typical (recall=0.527), gap=0.306
+    illumination: best=Extreme (recall=0.616), worst=Normal (recall=0.525), gap=0.092
+    occlusion: best=No Occlusion (recall=0.697), worst=Heavy (recall=0.212), gap=0.485
+    pose: best=Typical (recall=0.537), worst=Atypical (recall=0.373), gap=0.164
+
+  --- RetinaFace_insightface_det ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4796     573  0.8933
+        blur      1  Normal Blur  10381      8405    1976  0.8097
+        blur      2   Heavy Blur  23373      6776   16597  0.2899
+  expression      0      Typical  38723     19632   19091  0.5070
+  expression      1  Exaggerated    400       345      55  0.8625
+illumination      0       Normal  36843     18487   18356  0.5018
+illumination      1      Extreme   2280      1490     790  0.6535
+   occlusion      0 No Occlusion  23434     16082    7352  0.6863
+   occlusion      1      Partial   7099      2180    4919  0.3071
+   occlusion      2        Heavy   8590      1715    6875  0.1997
+        pose      0      Typical  37486     19158   18328  0.5111
+        pose      1     Atypical   1637       819     818  0.5003
+
+    blur: best=Clear (recall=0.893), worst=Heavy Blur (recall=0.290), gap=0.603
+    expression: best=Exaggerated (recall=0.863), worst=Typical (recall=0.507), gap=0.356
+    illumination: best=Extreme (recall=0.653), worst=Normal (recall=0.502), gap=0.152
+    occlusion: best=No Occlusion (recall=0.686), worst=Heavy (recall=0.200), gap=0.487
+    pose: best=Typical (recall=0.511), worst=Atypical (recall=0.500), gap=0.011
+
+  --- RetinaFace_insightface_det_MultiScale ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4813     556  0.8964
+        blur      1  Normal Blur  10381      8482    1899  0.8171
+        blur      2   Heavy Blur  23373      6955   16418  0.2976
+  expression      0      Typical  38723     19905   18818  0.5140
+  expression      1  Exaggerated    400       345      55  0.8625
+illumination      0       Normal  36843     18742   18101  0.5087
+illumination      1      Extreme   2280      1508     772  0.6614
+   occlusion      0 No Occlusion  23434     16226    7208  0.6924
+   occlusion      1      Partial   7099      2240    4859  0.3155
+   occlusion      2        Heavy   8590      1784    6806  0.2077
+        pose      0      Typical  37486     19417   18069  0.5180
+        pose      1     Atypical   1637       833     804  0.5089
+
+    blur: best=Clear (recall=0.896), worst=Heavy Blur (recall=0.298), gap=0.599
+    expression: best=Exaggerated (recall=0.863), worst=Typical (recall=0.514), gap=0.349
+    illumination: best=Extreme (recall=0.661), worst=Normal (recall=0.509), gap=0.153
+    occlusion: best=No Occlusion (recall=0.692), worst=Heavy (recall=0.208), gap=0.485
+    pose: best=Typical (recall=0.518), worst=Atypical (recall=0.509), gap=0.009
+
+  --- RetinaFace_insightface_det_Tiled_MultiScale ---
+   attribute  level        label  total  detected  missed  recall
+        blur      0        Clear   5369      4968     401  0.9253
+        blur      1  Normal Blur  10381      9635     746  0.9281
+        blur      2   Heavy Blur  23373     13198   10175  0.5647
+  expression      0      Typical  38723     27425   11298  0.7082
+  expression      1  Exaggerated    400       376      24  0.9400
+illumination      0       Normal  36843     25932   10911  0.7039
+illumination      1      Extreme   2280      1869     411  0.8197
+   occlusion      0 No Occlusion  23434     20130    3304  0.8590
+   occlusion      1      Partial   7099      4189    2910  0.5901
+   occlusion      2        Heavy   8590      3482    5108  0.4054
+        pose      0      Typical  37486     26708   10778  0.7125
+        pose      1     Atypical   1637      1093     544  0.6677
+
+    blur: best=Normal Blur (recall=0.928), worst=Heavy Blur (recall=0.565), gap=0.363
+    expression: best=Exaggerated (recall=0.940), worst=Typical (recall=0.708), gap=0.232
+    illumination: best=Extreme (recall=0.820), worst=Normal (recall=0.704), gap=0.116
+    occlusion: best=No Occlusion (recall=0.859), worst=Heavy (recall=0.405), gap=0.454
+    pose: best=Typical (recall=0.713), worst=Atypical (recall=0.668), gap=0.045
+
+
+======================================================================
+  6. EVENT/SCENE CATEGORY ANALYSIS
+======================================================================
+
+  WIDER FACE images belong to 61 event categories (e.g., Parade, Meeting, etc.).
+  Below shows recall sorted worst-to-best per event category.
+
+  --- MTCNN ---
+  Worst 5 categories:
+              event  num_images  total_gt  tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064 170  66  894     0.7203  0.1598 0.2615
+         Basketball         131      3586 793 212 2793     0.7891  0.2211 0.3455
+           Festival          45      1033 281 101  752     0.7356  0.2720 0.3972
+            Traffic          19       272  76  30  196     0.7170  0.2794 0.4021
+           Baseball          24       105  34   9   71     0.7907  0.3238 0.4595
+
+  Best 5 categories:
+          event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+   Stock_Market          19        53  44  16   9     0.7333  0.8302 0.7788
+ Worker_Laborer          45       104  88  48  16     0.6471  0.8462 0.7333
+        Dresses          73       211 180  71  31     0.7171  0.8531 0.7792
+Waiter_Waitress          51       120 103  36  17     0.7410  0.8583 0.7954
+   Family_Group          58       562 505  59  57     0.8954  0.8986 0.8970
+
+  --- MTCNN_MultiScale ---
+  Worst 5 categories:
+              event  num_images  total_gt  tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064 220 179  844     0.5514  0.2068 0.3008
+         Basketball         131      3586 975 520 2611     0.6522  0.2719 0.3838
+            Traffic          19       272  87  86  185     0.5029  0.3199 0.3910
+           Shoppers          42       273  93 126  180     0.4247  0.3407 0.3780
+           Festival          45      1033 373 306  660     0.5493  0.3611 0.4357
+
+  Best 5 categories:
+          event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+   Stock_Market          19        53  45  39   8     0.5357  0.8491 0.6569
+Waiter_Waitress          51       120 105  69  15     0.6034  0.8750 0.7143
+        Dresses          73       211 185 158  26     0.5394  0.8768 0.6679
+ Worker_Laborer          45       104  92 112  12     0.4510  0.8846 0.5974
+   Family_Group          58       562 508 195  54     0.7226  0.9039 0.8032
+
+  --- MTCNN_Tiled_MultiScale ---
+  Worst 5 categories:
+              event  num_images  total_gt   tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064  240 262  824     0.4781  0.2256 0.3065
+         Basketball         131      3586 1018 790 2568     0.5631  0.2839 0.3775
+            Traffic          19       272   87 122  185     0.4163  0.3199 0.3617
+           Shoppers          42       273   99 192  174     0.3402  0.3626 0.3511
+           Festival          45      1033  396 478  637     0.4531  0.3833 0.4153
+
+  Best 5 categories:
+           event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+Press_Conference          77       247 211 249  36     0.4587  0.8543 0.5969
+  Worker_Laborer          45       104  91 179  13     0.3370  0.8750 0.4866
+ Waiter_Waitress          51       120 106 128  14     0.4530  0.8833 0.5989
+         Dresses          73       211 187 285  24     0.3962  0.8863 0.5476
+    Family_Group          58       562 514 326  48     0.6119  0.9146 0.7332
+
+  --- RetinaFace_insightface_det ---
+  Worst 5 categories:
+              event  num_images  total_gt   tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064  217   8  847     0.9644  0.2039 0.3367
+           Festival          45      1033  235  11  798     0.9553  0.2275 0.3675
+         Basketball         131      3586 1027  52 2559     0.9518  0.2864 0.4403
+           Baseball          24       105   32   2   73     0.9412  0.3048 0.4604
+            Traffic          19       272   88   3  184     0.9670  0.3235 0.4848
+
+  Best 5 categories:
+          event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+Waiter_Waitress          51       120 108   3  12     0.9730  0.9000 0.9351
+   Stock_Market          19        53  48   2   5     0.9600  0.9057 0.9320
+ Worker_Laborer          45       104  96   0   8     1.0000  0.9231 0.9600
+        Dresses          73       211 196   4  15     0.9800  0.9289 0.9538
+   Family_Group          58       562 525   4  37     0.9924  0.9342 0.9624
+
+  --- RetinaFace_insightface_det_MultiScale ---
+  Worst 5 categories:
+              event  num_images  total_gt   tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064  227  10  837     0.9578  0.2133 0.3490
+           Festival          45      1033  247  12  786     0.9537  0.2391 0.3824
+         Basketball         131      3586 1048  56 2538     0.9493  0.2922 0.4469
+           Baseball          24       105   33   2   72     0.9429  0.3143 0.4714
+            Traffic          19       272   90   5  182     0.9474  0.3309 0.4905
+
+  Best 5 categories:
+          event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+Waiter_Waitress          51       120 108   3  12     0.9730  0.9000 0.9351
+   Stock_Market          19        53  48   2   5     0.9600  0.9057 0.9320
+        Dresses          73       211 196   4  15     0.9800  0.9289 0.9538
+ Worker_Laborer          45       104  97   0   7     1.0000  0.9327 0.9652
+   Family_Group          58       562 527   3  35     0.9943  0.9377 0.9652
+
+  --- RetinaFace_insightface_det_Tiled_MultiScale ---
+  Worst 5 categories:
+              event  num_images  total_gt   tp  fp   fn  precision  recall     f1
+Matador_Bullfighter          61      1064  446  36  618     0.9253  0.4192 0.5770
+            Traffic          19       272  138  14  134     0.9079  0.5074 0.6509
+         Basketball         131      3586 1876 179 1710     0.9129  0.5231 0.6651
+           Baseball          24       105   57   5   48     0.9194  0.5429 0.6826
+           Shoppers          42       273  150  19  123     0.8876  0.5495 0.6787
+
+  Best 5 categories:
+           event  num_images  total_gt  tp  fp  fn  precision  recall     f1
+         Dresses          73       211 200  21  11     0.9050  0.9479 0.9259
+          Tennis          35       167 159   4   8     0.9755  0.9521 0.9636
+Press_Conference          77       247 237   8  10     0.9673  0.9595 0.9634
+  Worker_Laborer          45       104 100   6   4     0.9434  0.9615 0.9524
+    Family_Group          58       562 545  11  17     0.9802  0.9698 0.9750
+
+
+======================================================================
+  7. PRECISION-RECALL CURVE & THRESHOLD SENSITIVITY
+======================================================================
+
+  Average Precision (AP) = area under the Precision-Recall curve.
+  Higher AP → better overall detector performance across all thresholds.
+
+  MTCNN: AP = 0.44236249409099
+  MTCNN_MultiScale: AP = 0.4926848287444172
+  MTCNN_Tiled_MultiScale: AP = 0.4985115128250961
+  RetinaFace_insightface_det: AP = 0.507276841614303
+  RetinaFace_insightface_det_MultiScale: AP = 0.5140899686611841
+  RetinaFace_insightface_det_Tiled_MultiScale: AP = 0.7031318042344716
+
+  --- Threshold Sensitivity: MTCNN ---
+ threshold    tp   fp    fn  precision  recall     f1
+       0.1 17759 4113 21364     0.8120  0.4539 0.5823
+       0.2 17759 4113 21364     0.8120  0.4539 0.5823
+       0.3 17759 4113 21364     0.8120  0.4539 0.5823
+       0.4 17759 4113 21364     0.8120  0.4539 0.5823
+       0.5 17759 4113 21364     0.8120  0.4539 0.5823
+       0.6 17759 4113 21364     0.8120  0.4539 0.5823
+       0.7 17077 2743 22046     0.8616  0.4365 0.5794
+       0.8 16303 1645 22820     0.9083  0.4167 0.5713
+       0.9 15130  831 23993     0.9479  0.3867 0.5493
+
+  Optimal threshold: 0.1 (P=0.812, R=0.454, F1=0.582)
+
+  --- Threshold Sensitivity: MTCNN_MultiScale ---
+ threshold    tp    fp    fn  precision  recall     f1
+       0.1 20092 11470 19031     0.6366  0.5136 0.5685
+       0.2 20092 11470 19031     0.6366  0.5136 0.5685
+       0.3 20092 11470 19031     0.6366  0.5136 0.5685
+       0.4 20031  9372 19092     0.6813  0.5120 0.5846
+       0.5 19989  8833 19134     0.6935  0.5109 0.5884
+       0.6 19958  8570 19165     0.6996  0.5101 0.5900
+       0.7 19184  5681 19939     0.7715  0.4904 0.5996
+       0.8 18303  3360 20820     0.8449  0.4678 0.6022
+       0.9 16951  1545 22172     0.9165  0.4333 0.5884
+
+  Optimal threshold: 0.8 (P=0.845, R=0.468, F1=0.602)
+
+  --- Threshold Sensitivity: MTCNN_Tiled_MultiScale ---
+ threshold    tp    fp    fn  precision  recall     f1
+       0.1 20732 17169 18391     0.5470  0.5299 0.5383
+       0.2 20732 17169 18391     0.5470  0.5299 0.5383
+       0.3 20732 17169 18391     0.5470  0.5299 0.5383
+       0.4 20644 14172 18479     0.5929  0.5277 0.5584
+       0.5 20573 13084 18550     0.6113  0.5259 0.5653
+       0.6 20502 12426 18621     0.6226  0.5240 0.5691
+       0.7 19735  8234 19388     0.7056  0.5044 0.5883
+       0.8 18825  4928 20298     0.7925  0.4812 0.5988
+       0.9 17472  2308 21651     0.8833  0.4466 0.5932
+
+  Optimal threshold: 0.8 (P=0.792, R=0.481, F1=0.599)
+
+  --- Threshold Sensitivity: RetinaFace_insightface_det ---
+ threshold    tp  fp    fn  precision  recall     f1
+       0.1 19977 888 19146     0.9574  0.5106 0.6660
+       0.2 19977 888 19146     0.9574  0.5106 0.6660
+       0.3 19977 888 19146     0.9574  0.5106 0.6660
+       0.4 19977 888 19146     0.9574  0.5106 0.6660
+       0.5 19977 888 19146     0.9574  0.5106 0.6660
+       0.6 17300 309 21823     0.9825  0.4422 0.6099
+       0.7 13931  83 25192     0.9941  0.3561 0.5243
+       0.8  8829  13 30294     0.9985  0.2257 0.3681
+       0.9   849   0 38274     1.0000  0.0217 0.0425
+
+  Optimal threshold: 0.1 (P=0.957, R=0.511, F1=0.666)
+
+  --- Threshold Sensitivity: RetinaFace_insightface_det_MultiScale ---
+ threshold    tp  fp    fn  precision  recall     f1
+       0.1 20250 948 18873     0.9553  0.5176 0.6714
+       0.2 20250 948 18873     0.9553  0.5176 0.6714
+       0.3 20250 948 18873     0.9553  0.5176 0.6714
+       0.4 20249 940 18874     0.9556  0.5176 0.6715
+       0.5 20236 929 18887     0.9561  0.5172 0.6713
+       0.6 17510 320 21613     0.9821  0.4476 0.6149
+       0.7 14071  82 25052     0.9942  0.3597 0.5282
+       0.8  8909  12 30214     0.9987  0.2277 0.3709
+       0.9   876   0 38247     1.0000  0.0224 0.0438
+
+  Optimal threshold: 0.4 (P=0.956, R=0.518, F1=0.671)
+
+  --- Threshold Sensitivity: RetinaFace_insightface_det_Tiled_MultiScale ---
+ threshold    tp   fp    fn  precision  recall     f1
+       0.1 27801 2374 11322     0.9213  0.7106 0.8024
+       0.2 27801 2374 11322     0.9213  0.7106 0.8024
+       0.3 27801 2374 11322     0.9213  0.7106 0.8024
+       0.4 27788 2195 11335     0.9268  0.7103 0.8042
+       0.5 27755 2146 11368     0.9282  0.7094 0.8042
+       0.6 24352  733 14771     0.9708  0.6224 0.7585
+       0.7 19461  180 19662     0.9908  0.4974 0.6623
+       0.8 12400   36 26723     0.9971  0.3169 0.4810
+       0.9  1486    0 37637     1.0000  0.0380 0.0732
+
+  Optimal threshold: 0.4 (P=0.927, R=0.710, F1=0.804)
+
+
+======================================================================
+  8. KEY FINDINGS & RECOMMENDATIONS
+======================================================================
+
+  Based on the analysis above:
+
+  [MTCNN]
+    - 91% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 888 px²
+    - Detected faces: mean area = 7,504 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 22% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  [MTCNN_MultiScale]
+    - 91% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 845 px²
+    - Detected faces: mean area = 6,778 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 23% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  [MTCNN_Tiled_MultiScale]
+    - 91% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 843 px²
+    - Detected faces: mean area = 6,596 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 24% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  [RetinaFace_insightface_det]
+    - 95% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 579 px²
+    - Detected faces: mean area = 7,066 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 22% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  [RetinaFace_insightface_det_MultiScale]
+    - 95% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 577 px²
+    - Detected faces: mean area = 6,981 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 22% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  [RetinaFace_insightface_det_Tiled_MultiScale]
+    - 94% of missed faces are smaller than 32×32 pixels
+    - Missed faces: mean area = 770 px²
+    - Detected faces: mean area = 5,163 px²
+    - The primary failure mode is FACE SIZE, not brightness or blur.
+    - 26% of missed faces are in dark regions (V < 80)
+      → CLAHE preprocessing may help for these cases.
+
+  General recommendations:
+    1. Multi-scale inference with upscaling recovers ~10-25% more faces.
+    2. Tiled inference helps on high-resolution crowd images.
+    3. Sub-16×16 faces are below detector resolution limits;
+       super-resolution preprocessing is needed for those.
+    4. Lowering confidence threshold below 0.4 risks more false positives.
+    5. Ensemble (RetinaFace + MTCNN) captures faces missed by either alone.
+
+======================================================================
+  END OF REPORT
+======================================================================

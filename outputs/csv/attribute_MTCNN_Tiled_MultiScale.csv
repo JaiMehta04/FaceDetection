@@ -1,0 +1,13 @@
+attribute,level,label,total,detected,missed,recall
+blur,0,Clear,5369,4604,765,0.8575
+blur,1,Normal Blur,10381,8559,1822,0.8245
+blur,2,Heavy Blur,23373,7569,15804,0.3238
+expression,0,Typical,38723,20399,18324,0.5268
+expression,1,Exaggerated,400,333,67,0.8325
+illumination,0,Normal,36843,19327,17516,0.5246
+illumination,1,Extreme,2280,1405,875,0.6162
+occlusion,0,No Occlusion,23434,16341,7093,0.6973
+occlusion,1,Partial,7099,2566,4533,0.3615
+occlusion,2,Heavy,8590,1825,6765,0.2125
+pose,0,Typical,37486,20121,17365,0.5368
+pose,1,Atypical,1637,611,1026,0.3732
