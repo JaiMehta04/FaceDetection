@@ -1,35 +1,8 @@
 # ──────────────────────────────────────────────────────────────
-# Core dependencies
-# ──────────────────────────────────────────────────────────────
-numpy>=1.24.0
-pandas>=2.0.0
-opencv-python>=4.8.0
-matplotlib>=3.7.0
-torch>=2.0.0
-torchvision>=0.15.0
-
-# ──────────────────────────────────────────────────────────────
-# Face detection models
-# ──────────────────────────────────────────────────────────────
-# MTCNN (PyTorch-based)
-facenet-pytorch>=2.5.3
-
-# RetinaFace — choose ONE:
-# Option A (recommended): insightface + ONNX runtime
-insightface>=0.7.3
-onnxruntime-gpu>=1.16.0    # use 'onnxruntime' for CPU-only
-
-# Option B: retinaface (TensorFlow-based) — uncomment if preferred
-# retinaface>=0.0.17
-
-# ──────────────────────────────────────────────────────────────
-# Optional / development
-# ──────────────────────────────────────────────────────────────
-tqdm>=4.66.0
-scipy>=1.11.0
-
-# ──────────────────────────────────────────────────────────────
-# Dashboard (Streamlit)
+# Streamlit Cloud deployment (dashboard only)
+# For full pipeline dependencies, see requirements_full.txt
 # ──────────────────────────────────────────────────────────────
 streamlit>=1.30.0
+pandas>=2.0.0
+numpy>=1.24.0
 plotly>=5.18.0
